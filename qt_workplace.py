@@ -12,7 +12,6 @@ class StyleThread(QThread):
 
     def run(self):
         from style import Style
-        self.terminate()
         style = Style()
         style.train()
 
@@ -21,6 +20,7 @@ class WorkspaceWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         self.pixmap = -1
+        self.thread = None
         self.filter_style = 0
         self.title = "Workplace"
         self.InitUI()
@@ -29,6 +29,7 @@ class WorkspaceWidget(QMainWindow):
         uic.loadUi('ui/workplace.ui', self)
         self.btn_filter_style.clicked.connect(
             self.btn_filter_style_onClick)
+        self.btn_apply.clicked.connect(self.apply)
         self.actionOpen.setShortcut('Ctrl+O')
         self.actionOpen.triggered.connect(self.act_open)
         self.actionSave.setShortcut('Ctrl+S')
@@ -44,7 +45,10 @@ class WorkspaceWidget(QMainWindow):
         i = Image.open(fileName)
         i.save("images/images/style.png")
         self.thread = StyleThread()
-        self.thread.start()
+
+    def apply(self):
+        if self.thread is not None:
+            self.thread.start()
 
     def act_open(self):
         fileName, _ = QFileDialog.getOpenFileName(self, "Open Image",
