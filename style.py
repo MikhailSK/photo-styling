@@ -21,6 +21,7 @@ def gram_matrix(x):
 
 class Style:
     def __init__(self):
+        print("INIT")
         self.ITERATIONS = 10
         self.CHANNELS = 3
         self.IMAGE_SIZE = 500
@@ -32,24 +33,34 @@ class Style:
         self.TOTAL_VARIATION_WEIGHT = 0.995
         self.TOTAL_VARIATION_LOSS_FACTOR = 1.25
 
-    def open_image(self, name1, name2):
+    def set_parameters(self, iterations=10, channels=3, image_size=500,
+                       content_weight=0.02, style_weight=4.5, total_variation_weight=0.995,
+                       total_variation_loss_factor=1.25):
+        print("SET_PARAMETERS")
 
-        print(1)
+        self.ITERATIONS = iterations
+        self.CHANNELS = channels
+        self.IMAGE_SIZE = image_size
+        self.IMAGE_WIDTH = self.IMAGE_SIZE
+        self.IMAGE_HEIGHT = self.IMAGE_SIZE
+        self.CONTENT_WEIGHT = content_weight
+        self.STYLE_WEIGHT = style_weight
+        self.TOTAL_VARIATION_WEIGHT = total_variation_weight
+        self.TOTAL_VARIATION_LOSS_FACTOR = total_variation_loss_factor
+
+    def open_image(self, name1, name2):
 
         self.input_image_path = name1
         self.style_image_path = name2
 
-        print(2)
-
-        self.output_image_path = "images/images/output.png"
+        self.output_image_path = "images/images/stylized/stylized{}.png".format(self.ITERATIONS)
         self.combined_image_path = "images/images/combined.png"
 
+        print(self.IMAGENET_MEAN_RGB_VALUES)
+
         self.input_image = Image.open(self.input_image_path)
-        print(3)
         self.input_image = self.input_image.resize((self.IMAGE_WIDTH, self.IMAGE_HEIGHT))
         self.input_image.save("images/images/input.png")
-
-
 
         self.style_image = Image.open(self.style_image_path)
         self.style_image = self.style_image.resize((self.IMAGE_WIDTH, self.IMAGE_HEIGHT))
@@ -130,6 +141,8 @@ class Style:
         self.outputs += backend.gradients(loss, self.combination_image)
 
         x = np.random.uniform(0, 255, (1, self.IMAGE_HEIGHT, self.IMAGE_WIDTH, 3)) - 128.
+
+        print("starting really train for ", self.ITERATIONS)
 
         for i in range(self.ITERATIONS):
             x, loss, info = fmin_l_bfgs_b(self.loss, x.flatten(), fprime=self.gradients, maxfun=20)

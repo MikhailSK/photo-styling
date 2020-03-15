@@ -2,6 +2,7 @@ import sys
 
 from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 
@@ -15,6 +16,8 @@ class MainWidget(QMainWindow):
 
     def InitUI(self):
         uic.loadUi('ui/main.ui', self)
+        pixmap = QPixmap('images/images/input.png')
+        self.img.setPixmap(pixmap)
         self.btn_exit.clicked.connect(
             self.btn_exit_onClick)
         self.btn_gan.clicked.connect(
